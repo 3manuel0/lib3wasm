@@ -5,21 +5,6 @@ let ddrawRectangle;
 WebAssembly.instantiateStreaming(fetch("main.wasm"), {
   env: wasmlib.make_environment({
     jprintf: wasmlib.printf,
-    // abs: (n) => {
-    //   return Math.abs(n);
-    // },
-    // sin: (n) => {
-    //   return Math.sin(n);
-    // },
-    // cos: (n) => {
-    //   return Math.cos(n);
-    // },
-    // tanh: (n) => {
-    //   return Math.tanh(n);
-    // },
-    // exp: (n) => {
-    //   return Math.exp(n);
-    // },
   }),
 }).then((w) => {
   wasm = w;

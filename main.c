@@ -1,11 +1,12 @@
-extern unsigned char __heap_base;
-extern unsigned long __builtin_wasm_memory_grow(int memory_index, unsigned long pages);
-int jprintf(const char * t, ...);
+#include "wheap.h"
+
+unsigned char * HEAP_BASE = &__heap_base;
+unsigned long PAGE_LEN = KiB(64);
 
 unsigned char *heap_base(){
-    *(&__heap_base) = 16;
-    jprintf("%d", __heap_base);
+    jprintf("%d %d", HEAP_BASE, PAGE_LEN);
     __builtin_wasm_memory_grow(0, 1);
-    return &__heap_base;
+    jprintf("%d %d", HEAP_BASE, __builtin_wasm_memory_size(0));
+    return HEAP_BASE;
 }
 
