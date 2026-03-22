@@ -1,4 +1,4 @@
-#include "includes/wheap.h"
+#include "includes/lib3masm.h"
 
 unsigned char * HEAP_BASE = &__heap_base;
 unsigned char * CURRENT_PTR = &__heap_base;
@@ -28,4 +28,8 @@ unsigned char *wmalloc(unsigned long size){
     CURRENT_PTR += size;
     return ptr;
 
+}
+
+void *malloc(size_t size){
+    return wmalloc(size);
 }

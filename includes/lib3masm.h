@@ -2,6 +2,7 @@
 #define LIB_3MAN
 #include <stdint.h>
 
+// ### WASM #########################################
 typedef uint8_t u8;
 typedef uint16_t u16;
 typedef uint32_t u32;
@@ -21,14 +22,40 @@ typedef int FILE;
 #define false 0
 #define true 1
 
+
+
+
+extern unsigned char __heap_base;
+extern unsigned char * HEAP_BASE;
+extern unsigned char * CURRENT_PTR;
+extern unsigned long PAGE_LEN;
+
+extern unsigned long __builtin_wasm_memory_grow(int memory_index, unsigned long pages);
+
+extern unsigned long __builtin_wasm_memory_size(int memory_index);
+
+int jprintf(const char * t, ...);
+
+unsigned char * wmalloc(unsigned long size);
+
+void *malloc(size_t size);
+
 int fwrite(const void *, unsigned long, unsigned long, FILE filedesc);
+
 size_t strlen(const char *s);
+
 int fprintf(FILE desc, const char *__restrict format, ...);
+
 void *memcpy( void* dest, const void* src, size_t count );
+
 void *realloc(void * ptr, size_t size);
+
 void free(void *ptr);
 
+void exit(int exit_code);
+
 int assert(int s);
+
 
 
 // ############ Arena allocator ##############################################

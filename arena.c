@@ -1,4 +1,13 @@
-#include "../includes/lib3manwasm.h"
+#include "includes/lib3masm.h"
+
+Arena a = {0};
+
+void *test(){
+    a = create_Arena(500);
+    jprintf("capacity :%d adress :%d cur_size: %d", a.capacity, a.address, a.cur_size);
+    return arena_Alloc(&a, 2);
+}
+
 
 Arena create_Arena(size_t arena_size){
     Arena arena = {0};
@@ -14,8 +23,13 @@ Arena create_Arena(size_t arena_size){
 }
 
 void *arena_Alloc(Arena * arena, size_t size){
-    assert(arena != NULL && size > 0);
-    assert(arena->capacity >= size && "The Size Cannot Be Bigger Than The Capacity");
+    if(arena == NULL && size == 0){
+        return NULL;
+    }
+    if(arena->capacity <= size){
+        jprintf("The Size Cannot Be Bigger Than The Capacity");
+        return NULL;
+    }
     void * ptr = NULL;
     if(arena->memory == NULL) return NULL;
     if(arena->cur_size + size <= arena->capacity){
