@@ -1,4 +1,4 @@
-#include "../includes/lib3masm.h"
+#include "../includes/lib3wasm.h"
 
 Arena create_Arena(size_t arena_size){
     Arena arena = {0};

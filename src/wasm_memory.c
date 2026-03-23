@@ -1,4 +1,4 @@
-#include "../includes/lib3masm.h"
+#include "../includes/lib3wasm.h"
 
 unsigned char * HEAP_BASE = &__heap_base;
 unsigned char * CURRENT_PTR = &__heap_base;
@@ -12,6 +12,8 @@ unsigned char *heap_base(){
     jprintf("%d %d", HEAP_BASE, __builtin_wasm_memory_size(0));
     return HEAP_BASE;
 }
+
+
 
 unsigned char *wmalloc(unsigned long size){
     unsigned char* ptr = CURRENT_PTR;

@@ -1,4 +1,4 @@
-#include "includes/lib3masm.h"
+#include "includes/lib3wasm.h"
 
 
 Arena a = {0};
@@ -13,5 +13,13 @@ void test(){
 void *test2(){
     a = create_Arena(500);
     jprintf("capacity :%d adress :%d cur_size: %d", a.capacity, a.address, a.cur_size);
-    return arena_Alloc(&a, 2);
+    
+    char * s = arena_Alloc(&a, 200);
+    jprintf("capacity :%d adress :%d cur_size: %d", a.capacity, a.address, a.cur_size);
+    for(int i = 0; i < 199; i ++){
+        s[i] = 'S';
+    }
+    s[199] = 0;
+    jprintf("s address = %d", s);
+    return s;
 }
