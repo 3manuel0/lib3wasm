@@ -6,24 +6,28 @@
 typedef uint8_t u8;
 typedef uint16_t u16;
 typedef uint32_t u32;
+typedef uint64_t u64;
 typedef int8_t i8;
 typedef int16_t i16;
 typedef int32_t i32;
-typedef int32_t i64;
-typedef unsigned long size_t;
+typedef int64_t i64;
+typedef __SIZE_TYPE__ size_t;
 typedef float f32;
 typedef double f64;
 
 typedef int FILE;
 
-#define NULL ((void *)0)
-#define stdout 1
-#define stderr 2
+#define ALIGNMENT 8 // memory alignment for wasm32
 #define false 0
 #define true 1
+#define NULL ((void *)0)
 
+#define stdout 1
+#define stderr 2
 
-
+typedef struct mem_header{
+  size_t size;
+}mem_header;
 
 extern unsigned char __heap_base;
 extern unsigned char * HEAP_BASE;
@@ -46,17 +50,15 @@ size_t strlen(const char *s);
 
 int fprintf(FILE desc, const char *__restrict format, ...);
 
-void *memcpy( void* dest, const void* src, size_t count );
+void *memcpy(void* dest, const void* src, size_t count);
+
+// TODO : IMPLIMENT THESE
 
 void *realloc(void * ptr, size_t size);
 
 void free(void *ptr);
 
-void exit(int exit_code);
-
-int assert(int s);
-
-
+// ############################################################################
 
 // ############ Arena allocator ##############################################
 #define KiB(x) ((uint64_t)(x) << 10)

@@ -1,24 +1,21 @@
 #include "../includes/lib3wasm.h"
 
-
-// TODO: sv inside areanaList
-
 // string View functions ##################################################################
 // creating a sv from const char *
 sv sv_from_cstr_sz(const char *str, size_t size){
-    if(str == NULL) return (sv){.str = NULL, .len = 0};
+    if(str == NULL || size == 0) return (sv){.str = NULL, .len = 0};
     return (sv){.str = (char*) str, .len = size};
 }
 
 sv sv_from_cstr(const char *str){
-    assert(str != NULL);
+    if(str == NULL) return (sv){.str = NULL, .len = 0};
     size_t size = strlen(str);
     return (sv){.str = (char*) str, .len = size};
 }
 
 sv sv_from_sb(const sb *sb){
-    assert(sb != NULL);
-    assert(sb->str != NULL && sb->len > 0);
+    if(sb == NULL) return (sv){.str = NULL, .len = 0};
+    if(sb->str == NULL || sb->len == 0) return (sv){.str = NULL, .len = 0};
     return (sv){.str = sb->str, .len = sb->len};
 }
 
@@ -65,8 +62,8 @@ int sv_cmp(const sv *sv1, const sv *sv2){
 }
 
 int sv_to_int64(const sv *sv, i64 *out){
-    assert(sv != NULL);
-    assert(sv->str != NULL && sv->len > 0);
+    if(sv == NULL) return false;
+    if(sv->str == NULL || sv->len == 0) return false;
 
     if(sv->len > 20) return false;
     if(sv->len == 20 && (sv->str[0] != '-' || sv->str[0] != '+'))
@@ -99,8 +96,8 @@ int sv_to_int64(const sv *sv, i64 *out){
 }
 
 int sv_to_int32(const sv *sv, i32 *out){
-    assert(sv != NULL);
-    assert(sv->str != NULL && sv->len > 0);
+    if(sv == NULL) return false;
+    if(sv->str == NULL || sv->len == 0) return false;
 
     if(sv->len > 11) return false;
     if(sv->len == 11 && (sv->str[0] != '-' || sv->str[0] != '+'))
@@ -134,9 +131,11 @@ int sv_to_int32(const sv *sv, i32 *out){
     return true;
 }
 
+// TODO: CHANGE THE ASSERTS INTO IF-STATMENTS (for wasm compatibility)
+
 int sv_to_float64(const sv *sv, f64 *out){
-    assert(sv != NULL);
-    assert(sv->str != NULL && sv->len > 0);
+    if(sv == NULL) return false;
+    if(sv->str == NULL || sv->len == 0) return false;
 
     u32 i = 0;
     u8 is_negative = 0;
@@ -268,13 +267,13 @@ void sv_writef(const sv *sv, FILE *file){
 
 // creating a sb from char *
 sb sb_from_cstr(const char *str){
-    assert(str != NULL);
+    if(str == NULL) return (sb){NULL, 0, 0};
     size_t len = strlen(str);
     size_t cap = len * 4;
     char *temp = malloc(cap);
 
     if(temp == NULL){
-        fprintf(stderr, "Error, Allocation Failed");
+        jprintf("Error, Allocation Failed");
         return (sb){.str = NULL, .len = 0, .cap = 0};
     }
 
@@ -282,10 +281,10 @@ sb sb_from_cstr(const char *str){
 }
 
 sb create_sb_inside_arenaList(ArenaList *arenaList, size_t cap){
-    assert(arenaList != NULL && cap > 0);
+    if(arenaList == NULL || cap == 0) return (sb){NULL, 0, 0};
     char *temp = arenaList_Alloc(arenaList, cap);
     if(temp == NULL){
-        fprintf(stderr, "Error, Allocation Failed");
+        jprintf("Error, Allocation Failed");
         return (sb){.str = NULL, .len = 0, .cap = 0};
     }
     return (sb){.str = temp, .len = 0, .cap = cap};
@@ -295,7 +294,7 @@ sb sb_arenaList_from_cstr_sz(ArenaList *arenaList, const char *str, size_t size)
     size_t cap = size * 4;
     char *temp = arenaList_Alloc(arenaList, cap);
     if(temp == NULL){
-        fprintf(stderr, "Error, Allocation Failed");
+        jprintf("Error, Allocation Failed");
         return (sb){.str = NULL, .len = 0, .cap = 0};
     }
     memcpy(temp, str, size);
@@ -303,10 +302,10 @@ sb sb_arenaList_from_cstr_sz(ArenaList *arenaList, const char *str, size_t size)
 }
 
 int sb_arenaList_push_cstr_sz(ArenaList *arenaList, sb *sb, const char *str, size_t size){
-    assert(sb != NULL || str != NULL);
+    if(sb == NULL || str == NULL) return str_err;
 
     if(sb->str == NULL || sb->cap == 0){
-        fprintf(stderr, "Erorr, Invalid String Buffer\n");
+        jprintf("Erorr, Invalid String Buffer\n");
         return str_err;
     }
 
@@ -317,7 +316,7 @@ int sb_arenaList_push_cstr_sz(ArenaList *arenaList, sb *sb, const char *str, siz
         size_t temp_cap = sb->cap * 2;
         char * temp  = arenaList_Realloc(arenaList, sb->str, sb->cap, sb->cap * 2);
         if(temp == NULL){
-            fprintf(stderr, "Erorr, Realocation Failed\n");
+            jprintf("Erorr, Realocation Failed\n");
             return str_fail;
         }
         sb->cap = temp_cap;
@@ -330,10 +329,10 @@ int sb_arenaList_push_cstr_sz(ArenaList *arenaList, sb *sb, const char *str, siz
 }
 
 int sb_arenaList_push_sv(ArenaList *arenaList, sb *sb, sv sv){
-    assert(sb != NULL || sv.str != NULL);
+    if(sb == NULL || sv.str == NULL) return str_err;
 
     if(sb->str == NULL || sb->cap == 0){
-        fprintf(stderr, "Erorr, Invalid String Buffer\n");
+        jprintf("Erorr, Invalid String Buffer\n");
         return str_err;
     }
 
@@ -344,7 +343,7 @@ int sb_arenaList_push_sv(ArenaList *arenaList, sb *sb, sv sv){
         size_t temp_cap = sb->cap * 2;
         char * temp  = arenaList_Realloc(arenaList, sb->str, sb->cap, sb->cap * 2);
         if(temp == NULL){
-            fprintf(stderr, "Erorr, Realocation Failed\n");
+            jprintf("Erorr, Realocation Failed\n");
             return str_fail;
         }
         sb->cap = temp_cap;
@@ -357,15 +356,15 @@ int sb_arenaList_push_sv(ArenaList *arenaList, sb *sb, sv sv){
 }
 
 sb *sb_cat(sb *dest, sb  *src){
-
-    assert(dest->len > 0 && src->str != NULL && dest->str != NULL && src->len != 0);
+    if(dest == NULL || src == NULL) return NULL;
+    if(dest->len == 0 || src->str == NULL || dest->str == NULL || src->len == 0) return NULL;
 
     if(dest->cap - 1 <  dest->len + src->len){
         size_t temp_len = (dest->len + src->len);
         size_t temp_cap = temp_len * 2;
         char * temp_str = realloc(dest->str, temp_cap);
         if(temp_str == NULL){
-            fprintf(stderr, "Error, allocation failed");
+            jprintf("Error, allocation failed\n");
             return NULL;
         }
         dest->str = temp_str;
@@ -382,7 +381,10 @@ sb *sb_cat(sb *dest, sb  *src){
 }
 
 sb sb_from_sv(const sv *sv){
-    assert(sv->len > 0 && sv->str != NULL);
+    if(sv == NULL) return (sb){NULL, 0, 0};
+
+    if(sv->len == 0 || sv->str == NULL) 
+        return (sb){NULL, 0, 0};
 
     char * temp = malloc(sv->len * 4);
 
@@ -397,10 +399,10 @@ sb sb_from_sv(const sv *sv){
 }
 
 int sb_push_sv(sb *sb, const sv *sv){
-    assert(sb != NULL && sv != NULL);
+    if(sb == NULL || sv == NULL) return str_err;
 
     if(sb->str == NULL || sv->str == NULL || sb->cap == 0){
-        fprintf(stderr, "Erorr, Invalid strings\n");
+        jprintf("Erorr, Invalid strings\n");
         return str_err;
     }
 
@@ -411,7 +413,7 @@ int sb_push_sv(sb *sb, const sv *sv){
         size_t temp_cap = sb->cap * 2;
         char * s  = realloc(sb->str, sb->cap);
         if(s == NULL){
-            fprintf(stderr, "Erorr, Realocation Failed\n");
+            jprintf("Erorr, Realocation Failed\n");
             return str_fail;
         }
         sb->cap = temp_cap;
@@ -425,12 +427,12 @@ int sb_push_sv(sb *sb, const sv *sv){
 
 int sb_push_cstr(sb *sb, const char *str){
     if(sb == NULL || str == NULL){
-        fprintf(stderr, "Erorr, NULL Pointer\n");
+        jprintf("Erorr, NULL Pointer\n");
         return str_err;
     }
 
     if(sb->str == NULL || sb->cap == 0){
-        fprintf(stderr, "Erorr, Invalid String Buffer\n");
+        jprintf("Erorr, Invalid String Buffer\n");
         return str_err;
     }
 
@@ -456,12 +458,12 @@ int sb_push_cstr(sb *sb, const char *str){
 
 int sb_push_cstr_sz(sb *sb, const char *str, size_t size){
     if(sb == NULL || str == NULL){
-        fprintf(stderr, "Erorr, NULL Pointer\n");
+        jprintf("Erorr, NULL Pointer\n");
         return str_err;
     }
 
     if(sb->str == NULL || sb->cap == 0){
-        fprintf(stderr, "Erorr, Invalid String Buffer\n");
+        jprintf("Erorr, Invalid String Buffer\n");
         return str_err;
     }
 
@@ -472,7 +474,7 @@ int sb_push_cstr_sz(sb *sb, const char *str, size_t size){
         size_t temp_cap = sb->cap * 2;
         char * temp  = realloc(sb->str, sb->cap);
         if(temp == NULL){
-            fprintf(stderr, "Erorr, Realocation Failed\n");
+            jprintf("Erorr, Realocation Failed\n");
             return str_fail;
         }
         sb->cap = temp_cap;
@@ -492,7 +494,7 @@ int sb_push_char(sb *sb, char ch){
         size_t temp_cap = sb->cap * 2;
         char * temp  = realloc(sb->str, sb->cap);
         if(temp == NULL){
-            fprintf(stderr, "Erorr, Realocation Failed\n");
+            jprintf("Erorr, Realocation Failed\n");
             return str_fail;
         }
         sb->str = temp;
@@ -504,7 +506,8 @@ int sb_push_char(sb *sb, char ch){
 }
 
 char * cstr_from_sb(const sb *sb){
-    assert(sb != NULL && sb->len > 0);
+    if(sb != NULL ) return NULL;
+    if(sb->len > 0) return NULL;
     sb->str[sb->len] = 0;
     return sb->str;
 }

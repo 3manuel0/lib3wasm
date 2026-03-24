@@ -5,8 +5,8 @@ Arena create_Arena(size_t arena_size){
     arena.capacity = arena_size;
     arena.memory = malloc(arena.capacity);
     if(arena.memory == NULL){
-        fprintf(stderr, "Error, Arena Allocation Failed\n");
-        exit(-1);
+        jprintf("Error, Arena Allocation Failed\n");
+        return arena;
     }
     arena.address = arena.memory;
     arena.cur_size = 0;
@@ -28,7 +28,7 @@ void *arena_Alloc(Arena * arena, size_t size){
         arena->address =  (char *)arena->address + size;
         arena->cur_size += size;
     }else{
-        fprintf(stderr, "Error, Arena is Full\n");
+        jprintf("Error, Arena is Full\n");
         // I will add more options later
     }
     return ptr;
@@ -43,7 +43,7 @@ void arena_reset(Arena * arena){
 
 
 void arena_free(Arena * arena){
-    assert(arena->memory != NULL);
+    if(arena->memory == NULL) return;
     // free the arena before closing the programme
     free(arena->memory);
     arena->memory = NULL;
@@ -55,7 +55,7 @@ void arena_free(Arena * arena){
 ArenaList *create_ArenaList(size_t size){
     ArenaList * arenaList = malloc(sizeof(ArenaList));
     if(arenaList == NULL){
-        fprintf(stderr, "Error, ArenaList Allocation Failed\n");
+        jprintf("Error, ArenaList Allocation Failed\n");
         return NULL;
     }
     arenaList->next = NULL;
@@ -73,8 +73,8 @@ void *arenaList_Alloc(ArenaList *arenalist, size_t size){
         arenalist->next = malloc(sizeof(ArenaList));
 
         if(arenalist->next == NULL){
-            fprintf(stderr, "Error, ArenaList Allocation Failed\n");
-            exit(-1);
+            jprintf("Error, ArenaList Allocation Failed\n");
+            return NULL;
         }
         
         size_t capacity = arenalist->arena.capacity;
@@ -86,8 +86,8 @@ void *arenaList_Alloc(ArenaList *arenalist, size_t size){
 }
 
 void *arenaList_Realloc(ArenaList * arenaList, void *p, size_t oldsz , size_t newsz){
-    assert(arenaList != NULL && p != NULL);
-    assert(newsz > oldsz && "new size is less or equals old size");
+    if(arenaList == NULL || p == NULL) return NULL;
+    if(newsz <= oldsz) return p;
     size_t diff = newsz - oldsz;
 
     if((char *)p + oldsz == arenaList->arena.address && \
