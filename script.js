@@ -82,16 +82,10 @@ WebAssembly.instantiateStreaming(fetch("build/main.wasm"), {
 }).then((w) => {
   wasm = w;
   const { heap_base, wmalloc, test, test2 } = w.instance.exports;
-  // console.log(wmalloc(500));
-  // console.log(wmalloc(1564000));
-  // console.log(wmalloc(64000));
-  // console.log(wmalloc(64000));
-  // console.log(wmalloc(64000));
-  // console.log(wmalloc(64000));
-  // console.log(wmalloc(64000));
-  console.log(test2());
+  // testing functions
   console.log(test());
-
+  console.log(test2());
+  wmalloc(1000);
   const buffer = wasm.instance.exports.memory.buffer;
   // console.log(heap_base());
 });
