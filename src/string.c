@@ -141,7 +141,7 @@ int sv_to_float64(const sv *sv, f64 *out){
     u8 is_negative = 0;
     f64 temp = 0.0;
     f64 exponent = 1.0;
-    // jprintf("-------------------------------------------\n");
+    // jsprintf("-------------------------------------------\n");
 
     if(sv->str[0] == '-'){
         is_negative = 1;
@@ -156,7 +156,7 @@ int sv_to_float64(const sv *sv, f64 *out){
     }
 
     // sv_println(sv);
-    // jprintf("break was in %c | f64 = %.8lf\n", sv->str[i], temp);
+    // jsprintf("break was in %c | f64 = %.8lf\n", sv->str[i], temp);
     if(i >= sv->len){
         if(out != NULL)
             *out = is_negative ? -temp : temp;
@@ -172,7 +172,7 @@ int sv_to_float64(const sv *sv, f64 *out){
         temp += (sv->str[i] - '0') / t;
         t*=10.0;
     }
-    // jprintf("break was in %c | f64 = %.8lf\n", sv->str[i], temp);
+    // jsprintf("break was in %c | f64 = %.8lf\n", sv->str[i], temp);
     
     // TODO: DO MORE TESTS AND FIXES
     if(i < sv->len){
@@ -182,7 +182,7 @@ int sv_to_float64(const sv *sv, f64 *out){
         u8 neg = 0;
         int exp = 0;
 
-        // jprintf("sign = %c\n", sv->str[i]);
+        // jsprintf("sign = %c\n", sv->str[i]);
 
         if(sv->str[i] == '+'){
             neg = 0;
@@ -208,7 +208,7 @@ int sv_to_float64(const sv *sv, f64 *out){
                 exp--;
             }
         }
-        // jprintf(" exp = %d exponent = %lf f64 = %lf\n", exp, exponent, temp * exponent);
+        // jsprintf(" exp = %d exponent = %lf f64 = %lf\n", exp, exponent, temp * exponent);
     }
 
     if( out != NULL){
@@ -273,7 +273,7 @@ sb sb_from_cstr(const char *str){
     char *temp = malloc(cap);
 
     if(temp == NULL){
-        jprintf("Error, Allocation Failed");
+        jsprintf("Error, Allocation Failed");
         return (sb){.str = NULL, .len = 0, .cap = 0};
     }
 
@@ -284,7 +284,7 @@ sb create_sb_inside_arenaList(ArenaList *arenaList, size_t cap){
     if(arenaList == NULL || cap == 0) return (sb){NULL, 0, 0};
     char *temp = arenaList_Alloc(arenaList, cap);
     if(temp == NULL){
-        jprintf("Error, Allocation Failed");
+        jsprintf("Error, Allocation Failed");
         return (sb){.str = NULL, .len = 0, .cap = 0};
     }
     return (sb){.str = temp, .len = 0, .cap = cap};
@@ -294,7 +294,7 @@ sb sb_arenaList_from_cstr_sz(ArenaList *arenaList, const char *str, size_t size)
     size_t cap = size * 4;
     char *temp = arenaList_Alloc(arenaList, cap);
     if(temp == NULL){
-        jprintf("Error, Allocation Failed");
+        jsprintf("Error, Allocation Failed");
         return (sb){.str = NULL, .len = 0, .cap = 0};
     }
     memcpy(temp, str, size);
@@ -305,7 +305,7 @@ int sb_arenaList_push_cstr_sz(ArenaList *arenaList, sb *sb, const char *str, siz
     if(sb == NULL || str == NULL) return str_err;
 
     if(sb->str == NULL || sb->cap == 0){
-        jprintf("Erorr, Invalid String Buffer\n");
+        jsprintf("Erorr, Invalid String Buffer\n");
         return str_err;
     }
 
@@ -316,7 +316,7 @@ int sb_arenaList_push_cstr_sz(ArenaList *arenaList, sb *sb, const char *str, siz
         size_t temp_cap = sb->cap * 2;
         char * temp  = arenaList_Realloc(arenaList, sb->str, sb->cap, sb->cap * 2);
         if(temp == NULL){
-            jprintf("Erorr, Realocation Failed\n");
+            jsprintf("Erorr, Realocation Failed\n");
             return str_fail;
         }
         sb->cap = temp_cap;
@@ -332,7 +332,7 @@ int sb_arenaList_push_sv(ArenaList *arenaList, sb *sb, sv sv){
     if(sb == NULL || sv.str == NULL) return str_err;
 
     if(sb->str == NULL || sb->cap == 0){
-        jprintf("Erorr, Invalid String Buffer\n");
+        jsprintf("Erorr, Invalid String Buffer\n");
         return str_err;
     }
 
@@ -343,7 +343,7 @@ int sb_arenaList_push_sv(ArenaList *arenaList, sb *sb, sv sv){
         size_t temp_cap = sb->cap * 2;
         char * temp  = arenaList_Realloc(arenaList, sb->str, sb->cap, sb->cap * 2);
         if(temp == NULL){
-            jprintf("Erorr, Realocation Failed\n");
+            jsprintf("Erorr, Realocation Failed\n");
             return str_fail;
         }
         sb->cap = temp_cap;
@@ -364,7 +364,7 @@ sb *sb_cat(sb *dest, sb  *src){
         size_t temp_cap = temp_len * 2;
         char * temp_str = realloc(dest->str, temp_cap);
         if(temp_str == NULL){
-            jprintf("Error, allocation failed\n");
+            jsprintf("Error, allocation failed\n");
             return NULL;
         }
         dest->str = temp_str;
@@ -402,7 +402,7 @@ int sb_push_sv(sb *sb, const sv *sv){
     if(sb == NULL || sv == NULL) return str_err;
 
     if(sb->str == NULL || sv->str == NULL || sb->cap == 0){
-        jprintf("Erorr, Invalid strings\n");
+        jsprintf("Erorr, Invalid strings\n");
         return str_err;
     }
 
@@ -413,7 +413,7 @@ int sb_push_sv(sb *sb, const sv *sv){
         size_t temp_cap = sb->cap * 2;
         char * s  = realloc(sb->str, sb->cap);
         if(s == NULL){
-            jprintf("Erorr, Realocation Failed\n");
+            jsprintf("Erorr, Realocation Failed\n");
             return str_fail;
         }
         sb->cap = temp_cap;
@@ -427,12 +427,12 @@ int sb_push_sv(sb *sb, const sv *sv){
 
 int sb_push_cstr(sb *sb, const char *str){
     if(sb == NULL || str == NULL){
-        jprintf("Erorr, NULL Pointer\n");
+        jsprintf("Erorr, NULL Pointer\n");
         return str_err;
     }
 
     if(sb->str == NULL || sb->cap == 0){
-        jprintf("Erorr, Invalid String Buffer\n");
+        jsprintf("Erorr, Invalid String Buffer\n");
         return str_err;
     }
 
@@ -458,12 +458,12 @@ int sb_push_cstr(sb *sb, const char *str){
 
 int sb_push_cstr_sz(sb *sb, const char *str, size_t size){
     if(sb == NULL || str == NULL){
-        jprintf("Erorr, NULL Pointer\n");
+        jsprintf("Erorr, NULL Pointer\n");
         return str_err;
     }
 
     if(sb->str == NULL || sb->cap == 0){
-        jprintf("Erorr, Invalid String Buffer\n");
+        jsprintf("Erorr, Invalid String Buffer\n");
         return str_err;
     }
 
@@ -474,7 +474,7 @@ int sb_push_cstr_sz(sb *sb, const char *str, size_t size){
         size_t temp_cap = sb->cap * 2;
         char * temp  = realloc(sb->str, sb->cap);
         if(temp == NULL){
-            jprintf("Erorr, Realocation Failed\n");
+            jsprintf("Erorr, Realocation Failed\n");
             return str_fail;
         }
         sb->cap = temp_cap;
@@ -494,7 +494,7 @@ int sb_push_char(sb *sb, char ch){
         size_t temp_cap = sb->cap * 2;
         char * temp  = realloc(sb->str, sb->cap);
         if(temp == NULL){
-            jprintf("Erorr, Realocation Failed\n");
+            jsprintf("Erorr, Realocation Failed\n");
             return str_fail;
         }
         sb->str = temp;

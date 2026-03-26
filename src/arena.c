@@ -5,7 +5,7 @@ Arena create_Arena(size_t arena_size){
     arena.capacity = arena_size;
     arena.memory = malloc(arena.capacity);
     if(arena.memory == NULL){
-        jprintf("Error, Arena Allocation Failed\n");
+        jsprintf("Error, Arena Allocation Failed\n");
         return arena;
     }
     arena.address = arena.memory;
@@ -18,7 +18,7 @@ void *arena_Alloc(Arena * arena, size_t size){
         return NULL;
     }
     if(arena->capacity <= size){
-        jprintf("The Size Cannot Be Bigger Than The Capacity\n");
+        jsprintf("The Size Cannot Be Bigger Than The Capacity\n");
         return NULL;
     }
     void * ptr = NULL;
@@ -28,7 +28,7 @@ void *arena_Alloc(Arena * arena, size_t size){
         arena->address =  (char *)arena->address + size;
         arena->cur_size += size;
     }else{
-        jprintf("Error, Arena is Full\n");
+        jsprintf("Error, Arena is Full\n");
         // I will add more options later
     }
     return ptr;
@@ -55,7 +55,7 @@ void arena_free(Arena * arena){
 ArenaList *create_ArenaList(size_t size){
     ArenaList * arenaList = malloc(sizeof(ArenaList));
     if(arenaList == NULL){
-        jprintf("Error, ArenaList Allocation Failed\n");
+        jsprintf("Error, ArenaList Allocation Failed\n");
         return NULL;
     }
     arenaList->next = NULL;
@@ -73,7 +73,7 @@ void *arenaList_Alloc(ArenaList *arenalist, size_t size){
         arenalist->next = malloc(sizeof(ArenaList));
 
         if(arenalist->next == NULL){
-            jprintf("Error, ArenaList Allocation Failed\n");
+            jsprintf("Error, ArenaList Allocation Failed\n");
             return NULL;
         }
         
