@@ -1,5 +1,6 @@
 #include "../includes/lib3wasm.h"
 
+
 Arena create_Arena(size_t arena_size){
     Arena arena = {0};
     arena.capacity = arena_size;
@@ -66,38 +67,40 @@ ArenaList *create_ArenaList(size_t size){
 
 // linked list of arenas in case the first arena got full
 //  so we can deallocat everything in the end
-void *arenaList_Alloc(ArenaList *arenalist, size_t size){
-    if(arenalist->arena.capacity >= arenalist->arena.cur_size + size){
-        return arena_Alloc(&arenalist->arena, size);
+void *arenaList_Alloc(ArenaList **arenalist, size_t size){
+    if((*arenalist)->arena.capacity >= (*arenalist)->arena.cur_size + size){
+        return arena_Alloc(&(*arenalist)->arena, size);
     }else{
-        arenalist->next = malloc(sizeof(ArenaList));
+        jsprintf("NEW ARENA CREATED IN THE ARENA-LIST\n");
+        (*arenalist)->next = malloc(sizeof(ArenaList));
 
-        if(arenalist->next == NULL){
+        if((*arenalist)->next == NULL){
             jsprintf("Error, ArenaList Allocation Failed\n");
             return NULL;
         }
         
-        size_t capacity = arenalist->arena.capacity;
-        arenalist = arenalist->next;
-        arenalist->arena = create_Arena(capacity);
-        arenalist->next = NULL;
-        return arena_Alloc(&arenalist->arena, size);
+        size_t capacity = (*arenalist)->arena.capacity;
+        *arenalist = (*arenalist)->next;
+        (*arenalist)->arena = create_Arena(capacity);
+        (*arenalist)->next = NULL;
+        jsprintf("------------arena: %d arena.capacity: %d arena.cur_size: %d------------------\n", &(*arenalist)->arena, (*arenalist)->arena.capacity, (*arenalist)->arena.cur_size);
+        return arena_Alloc(&(*arenalist)->arena, size);
     }
 }
 
-void *arenaList_Realloc(ArenaList * arenaList, void *p, size_t oldsz , size_t newsz){
-    if(arenaList == NULL || p == NULL) return NULL;
+void *arenaList_Realloc(ArenaList **arenalist, void *p, size_t oldsz , size_t newsz){
+    if(arenalist == NULL || p == NULL) return NULL;
     if(newsz <= oldsz) return p;
     size_t diff = newsz - oldsz;
 
-    if((char *)p + oldsz == arenaList->arena.address && \
-        arenaList->arena.cur_size + diff <= arenaList->arena.capacity)
+    if((char *)p + oldsz == (*arenalist)->arena.address && \
+        (*arenalist)->arena.cur_size + diff <= (*arenalist)->arena.capacity)
     {
-        arenaList->arena.address = (char *)arenaList->arena.address + diff;
-        arenaList->arena.cur_size += diff;
+        (*arenalist)->arena.address = (char *)(*arenalist)->arena.address + diff;
+        (*arenalist)->arena.cur_size += diff;
         return p;
     }else{
-        void *temp = arenaList_Alloc(arenaList, newsz);
+        void *temp = arenaList_Alloc(arenalist, newsz);
         memcpy(temp, p, oldsz);
         return temp;
     }
@@ -106,8 +109,10 @@ void *arenaList_Realloc(ArenaList * arenaList, void *p, size_t oldsz , size_t ne
 // free all the arenas we created
 void arenaList_free(ArenaList * head){
     while (head != NULL) {
+        jsprintf("+++++head = %d+++++++++++", head);
         ArenaList * temp = head;
         head = head->next;
+        jsprintf("+++++head = %d+++++++++++", head);
         arena_free(&temp->arena);
         free(temp);
     }

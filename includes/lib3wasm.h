@@ -87,8 +87,8 @@ void arena_free(Arena *arena);
 
 // for multiple Arenas (linked list of Arenas)
 ArenaList *create_ArenaList(size_t size);
-void *arenaList_Alloc(ArenaList *arenalist, size_t size);// reserves a size inside the arenaList and returns a pointer to the start of it
-void *arenaList_Realloc(ArenaList * arenaList, void *p, size_t oldsz , size_t newsz); 
+void *arenaList_Alloc(ArenaList **arenalist, size_t size);// reserves a size inside the arenaList and returns a pointer to the start of it
+void *arenaList_Realloc(ArenaList **arenaList, void *p, size_t oldsz , size_t newsz); 
 void arenaList_free(ArenaList *head);
 // #############################################################################
 
@@ -109,7 +109,7 @@ typedef string_buffer sb;
 
 enum { str_fail = -1, str_succ, str_err };
 
-#define sv_from_lit(str) (sv){str, sizeof(str) - 1}
+#define sv_from_lit(str) (string_view){str, sizeof(str) - 1}
 
 // string-view functions ###############################################
 sv sv_from_cstr_sz(const char *str, size_t size);// creating a string view from char * + size
@@ -137,13 +137,13 @@ void sv_writef(const sv *sv, FILE *file); // wirtes sv to a file or stdout/stder
 // string_buffer functions ###########################################################
 sb sb_from_cstr(const char *str);// creating a string-buffer from char *
 
-sb create_sb_inside_arenaList(ArenaList *arenaList, size_t cap);
+sb create_sb_inside_arenaList(ArenaList **arenaList, size_t cap);
 
-sb sb_arenaList_from_cstr_sz(ArenaList *arenaList, const char *str, size_t size); // creating a string-buffer from char * with it's size inside an areanaList
+sb sb_arenaList_from_cstr_sz(ArenaList **arenaList, const char *str, size_t size); // creating a string-buffer from char * with it's size inside an areanaList
 
-int sb_arenaList_push_cstr_sz(ArenaList *arenaList, sb *sb, const char *str, size_t size);
+int sb_arenaList_push_cstr_sz(ArenaList **arenaList, sb *sb, const char *str, size_t size);
 
-int sb_arenaList_push_sv(ArenaList *arenaList, sb *sb, sv sv);
+int sb_arenaList_push_sv(ArenaList **arenaList, sb *sb, sv sv);
 
 sb *sb_cat(sb *dest, sb *src); // concatanate two string-buffers in the heap
 

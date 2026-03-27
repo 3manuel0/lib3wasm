@@ -15,6 +15,7 @@ unsigned char *heap_base(){
 
 // TODO : ADD THE MEMORY HEADER BEFORE THE ALLOCATION FOR FREE
 unsigned char *wmalloc(unsigned long size){
+    jsprintf("CURRENT_PTR = %d\n", CURRENT_PTR);
     unsigned char *ptr = CURRENT_PTR + sizeof(mem_header);
     size_t alloc_size = ((size + (ALIGNMENT - 1)) & ~(ALIGNMENT - 1));
     size_t total_size = sizeof(mem_header) + alloc_size;

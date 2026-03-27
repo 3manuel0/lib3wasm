@@ -1,7 +1,6 @@
 #include "includes/lib3wasm.h"
 
 
-Arena a = {0};
 
 i64 test(){
     sv tests[] = {
@@ -30,15 +29,17 @@ i64 test(){
 }
 
 void *test2(){
-    a = create_Arena(500);
-    jsprintf("capacity :%d adress :%d cur_size: %d\n", a.capacity, a.address, a.cur_size);
+    ArenaList * a = create_ArenaList(500);
+    jsprintf("capacity :%d adress :%d cur_size: %d\n", a->arena.capacity, a->arena.address, a->arena.cur_size);
     
-    char * s = arena_Alloc(&a, 200);
-    jsprintf("capacity :%d adress :%d cur_size: %d\n", a.capacity, a.address, a.cur_size);
-    for(int i = 0; i < 199; i ++){
-        s[i] = 'S';
+    string_view sv = sv_from_lit("Testing testing 1234 sdasdadas sdasdasdasd asdasdadasdaasd adadads");
+    for(int i = 0; i < 50; i++){
+        string_view *s = arenaList_Alloc(&a, sv.len);
+        jsprintf("capacity :%d adress :%d cur_size: %d\n", a->arena.capacity, a->arena.address, a->arena.cur_size);
+        jsprintf("string_view *: %d\n", s);
     }
-    s[199] = 0;
-    jsprintf("s address = %d\n", s);
-    return s;
+
+    jsprintf("capacity :%d adress :%d cur_size: %d next: %d\n", a->arena.capacity, a->arena.address, a->arena.cur_size, a->next);
+    arenaList_free(a);
+    return 0;
 }

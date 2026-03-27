@@ -273,35 +273,35 @@ sb sb_from_cstr(const char *str){
     char *temp = malloc(cap);
 
     if(temp == NULL){
-        jsprintf("Error, Allocation Failed");
+        jsprintf("Error, Allocation Failed\n");
         return (sb){.str = NULL, .len = 0, .cap = 0};
     }
 
     return (sb){.str = temp, .len = len, .cap = cap};
 }
 
-sb create_sb_inside_arenaList(ArenaList *arenaList, size_t cap){
+sb create_sb_inside_arenaList(ArenaList **arenaList, size_t cap){
     if(arenaList == NULL || cap == 0) return (sb){NULL, 0, 0};
     char *temp = arenaList_Alloc(arenaList, cap);
     if(temp == NULL){
-        jsprintf("Error, Allocation Failed");
+        jsprintf("Error, Allocation Failed\n");
         return (sb){.str = NULL, .len = 0, .cap = 0};
     }
     return (sb){.str = temp, .len = 0, .cap = cap};
 }
 
-sb sb_arenaList_from_cstr_sz(ArenaList *arenaList, const char *str, size_t size){
+sb sb_arenaList_from_cstr_sz(ArenaList **arenaList, const char *str, size_t size){
     size_t cap = size * 4;
     char *temp = arenaList_Alloc(arenaList, cap);
     if(temp == NULL){
-        jsprintf("Error, Allocation Failed");
+        jsprintf("Error, Allocation Failed\n");
         return (sb){.str = NULL, .len = 0, .cap = 0};
     }
     memcpy(temp, str, size);
     return (sb){.str = temp, .len = size, .cap = cap};
 }
 
-int sb_arenaList_push_cstr_sz(ArenaList *arenaList, sb *sb, const char *str, size_t size){
+int sb_arenaList_push_cstr_sz(ArenaList **arenaList, sb *sb, const char *str, size_t size){
     if(sb == NULL || str == NULL) return str_err;
 
     if(sb->str == NULL || sb->cap == 0){
@@ -328,7 +328,7 @@ int sb_arenaList_push_cstr_sz(ArenaList *arenaList, sb *sb, const char *str, siz
     return str_succ;
 }
 
-int sb_arenaList_push_sv(ArenaList *arenaList, sb *sb, sv sv){
+int sb_arenaList_push_sv(ArenaList **arenaList, sb *sb, sv sv){
     if(sb == NULL || sv.str == NULL) return str_err;
 
     if(sb->str == NULL || sb->cap == 0){
@@ -389,7 +389,7 @@ sb sb_from_sv(const sv *sv){
     char * temp = malloc(sv->len * 4);
 
     if(temp == NULL){
-        fprintf(stderr, "Error, Allocation Failed");
+        fprintf(stderr, "Error, Allocation Failed\n");
         return (sb){.str = NULL, .len = 0, .cap = 0};
     }
 

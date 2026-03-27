@@ -83,7 +83,7 @@ WebAssembly.instantiateStreaming(fetch("build/main.wasm"), {
   wasm = w;
   const { heap_base, wmalloc, test, test2 } = w.instance.exports;
   // testing functions
-  console.log(test());
+  // console.log(test());
   console.log(test2());
   wmalloc(1000);
   // console.log(heap_base());
