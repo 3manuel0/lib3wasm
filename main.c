@@ -2,7 +2,7 @@
 
 
 
-i64 test(){
+i64 test_sv(){
     sv tests[] = {
         sv_from_lit("123.456"),
         sv_from_lit("-987"),
@@ -28,8 +28,8 @@ i64 test(){
     return t;
 }
 
-void *test2(){
-    ArenaList * a = create_ArenaList(500);
+void test_ArenaList(){
+    ArenaList * a = create_ArenaList(KiB(5));
     jsprintf("capacity :%d adress :%d cur_size: %d\n", a->arena.capacity, a->arena.address, a->arena.cur_size);
     
     string_view sv = sv_from_lit("Testing testing 1234 sdasdadas sdasdasdasd asdasdadasdaasd adadads");
@@ -39,8 +39,15 @@ void *test2(){
         jsprintf("string_view *: %d\n", s);
         sv_println(&sv);
     }
+    char *s = arenaList_Alloc(&a, 800);
     arenaList_Alloc(&a, KiB(5));
-    jsprintf("capacity :%d adress :%d cur_size: %d next: %d\n", a->arena.capacity, a->arena.address, a->arena.cur_size, a->next);
+    arenaList_Alloc(&a, 800);
+    // s[0] = '1';
+    jsprintf("capacity :%d adress :%d cur_size: %d next: %d prev: %d\n", a->arena.capacity, a->arena.address, a->arena.cur_size, a->next, a->prev);
     arenaList_free(a);
-    return 0;
+    return;
+}
+
+void test_sb(){
+    return;
 }

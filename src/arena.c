@@ -18,10 +18,7 @@ void *arena_Alloc(Arena * arena, size_t size){
     if(arena == NULL && size == 0){
         return NULL;
     }
-    if(arena->capacity <= size){
-        jsprintf("The Size Cannot Be Bigger Than The Capacity\n");
-        return NULL;
-    }
+
     void * ptr = NULL;
     if(arena->memory == NULL) return NULL;
     if(arena->cur_size + size <= arena->capacity){
@@ -30,7 +27,6 @@ void *arena_Alloc(Arena * arena, size_t size){
         arena->cur_size += size;
     }else{
         jsprintf("Error, Arena is Full\n");
-        // I will add more options later
     }
     return ptr;
 }
@@ -61,7 +57,7 @@ ArenaList *create_ArenaList(size_t size){
     }
     arenaList->next = NULL;
     if(arenaList == NULL) return NULL;
-    *arenaList = (ArenaList){.arena = create_Arena(size), .next = NULL};
+    *arenaList = (ArenaList){.arena = create_Arena(size), .next = NULL, .prev = NULL};
     return arenaList;
 }
 
@@ -70,6 +66,14 @@ ArenaList *create_ArenaList(size_t size){
 void *arenaList_Alloc(ArenaList **arenalist, size_t size){
     if((*arenalist)->arena.capacity >= (*arenalist)->arena.cur_size + size){
         return arena_Alloc(&(*arenalist)->arena, size);
+    }
+    ArenaList * prev = (*arenalist)->prev;
+    
+    while(prev != NULL){
+        if(prev->arena.capacity >= prev->arena.cur_size + size){
+            return arena_Alloc(&prev->arena, size);
+        }
+        prev = prev->prev;
     }
 
     jsprintf("NEW ARENA CREATED IN THE ARENA-LIST\n");
@@ -85,14 +89,17 @@ void *arenaList_Alloc(ArenaList **arenalist, size_t size){
     while(size > capacity){
         capacity *= 2;
     }
-
+    
+    prev = (*arenalist);
     *arenalist = (*arenalist)->next;
+    (*arenalist)->prev = prev;
     (*arenalist)->arena = create_Arena(capacity);
     (*arenalist)->next = NULL;
     jsprintf("------------arena: %d arena.capacity: %d arena.cur_size: %d------------------\n", &(*arenalist)->arena, (*arenalist)->arena.capacity, (*arenalist)->arena.cur_size);
     return arena_Alloc(&(*arenalist)->arena, size);
 }
 
+// TODO: THIS DOESN"T WORK CURRENTLY FIX IT 
 void *arenaList_Realloc(ArenaList **arenalist, void *p, size_t oldsz , size_t newsz){
     if(arenalist == NULL || p == NULL) return NULL;
     if(newsz <= oldsz) return p;
@@ -112,12 +119,11 @@ void *arenaList_Realloc(ArenaList **arenalist, void *p, size_t oldsz , size_t ne
 }
 
 // free all the arenas we created
-void arenaList_free(ArenaList * head){
-    while (head != NULL) {
-        jsprintf("+++++ head = %d +++++++++++", head);
-        ArenaList * temp = head;
-        head = head->next;
-        jsprintf("+++++ head = %d +++++++++++", head);
+void arenaList_free(ArenaList * arenaList){
+    while (arenaList != NULL) {
+        jsprintf("+++++ head = %d +++++++++++\n", arenaList);
+        ArenaList * temp = arenaList;
+        arenaList = arenaList->prev;
         arena_free(&temp->arena);
         free(temp);
     }

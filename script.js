@@ -4,7 +4,6 @@ const get_str = wasmlib.get_str;
 const terminal = document.getElementById("terminal");
 const get_str_len = (str_ptr, len) => {
   const buffer = wasm.instance.exports.memory.buffer;
-  console.log(str_ptr);
   const str_bytes = new Uint8Array(buffer, str_ptr, len);
   return new TextDecoder().decode(str_bytes);
 };
@@ -81,10 +80,10 @@ WebAssembly.instantiateStreaming(fetch("build/main.wasm"), {
   }),
 }).then((w) => {
   wasm = w;
-  const { heap_base, wmalloc, test, test2 } = w.instance.exports;
+  const { heap_base, malloc, test_sv, test_ArenaList } = w.instance.exports;
+  console.log(heap_base());
+
   // testing functions
-  // console.log(test());
-  console.log(test2());
-  wmalloc(1000);
-  // console.log(heap_base());
+  // console.log(test_sv());
+  console.log(test_ArenaList());
 });

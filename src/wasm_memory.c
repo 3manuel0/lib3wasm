@@ -1,8 +1,14 @@
 #include "../includes/lib3wasm.h"
 
-unsigned char *HEAP_BASE = &__heap_base;
-unsigned char *CURRENT_PTR = &__heap_base;
-unsigned long PAGE_LEN = KiB(64);
+typedef struct Free_mem{
+    u8 *free_mem[100];
+    size_t index;
+}Free_mem;
+
+Free_mem FREE_MEM = {0};
+u8 *HEAP_BASE = &__heap_base;
+u8 *CURRENT_PTR = &__heap_base;
+size_t PAGE_LEN = KiB(64);
 
 unsigned char *heap_base(){
     long mb = MiB(1);
@@ -59,4 +65,12 @@ size_t strlen(const char *s){
         len++;
     }
     return len;
+}
+
+void free(void *ptr){
+    mem_header *h = (mem_header *) ptr - 1;
+    h->flag = false;
+    FREE_MEM.free_mem[FREE_MEM.index] = ptr;
+    FREE_MEM.index += 1;
+    return;
 }

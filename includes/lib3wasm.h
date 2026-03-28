@@ -78,6 +78,7 @@ typedef struct {
 typedef struct ArenaList {
   Arena arena;
   struct ArenaList *next;
+  struct ArenaList *prev;
 } ArenaList;
 
 Arena create_Arena(size_t arena_size);
