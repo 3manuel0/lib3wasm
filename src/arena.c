@@ -70,22 +70,27 @@ ArenaList *create_ArenaList(size_t size){
 void *arenaList_Alloc(ArenaList **arenalist, size_t size){
     if((*arenalist)->arena.capacity >= (*arenalist)->arena.cur_size + size){
         return arena_Alloc(&(*arenalist)->arena, size);
-    }else{
-        jsprintf("NEW ARENA CREATED IN THE ARENA-LIST\n");
-        (*arenalist)->next = malloc(sizeof(ArenaList));
-
-        if((*arenalist)->next == NULL){
-            jsprintf("Error, ArenaList Allocation Failed\n");
-            return NULL;
-        }
-        
-        size_t capacity = (*arenalist)->arena.capacity;
-        *arenalist = (*arenalist)->next;
-        (*arenalist)->arena = create_Arena(capacity);
-        (*arenalist)->next = NULL;
-        jsprintf("------------arena: %d arena.capacity: %d arena.cur_size: %d------------------\n", &(*arenalist)->arena, (*arenalist)->arena.capacity, (*arenalist)->arena.cur_size);
-        return arena_Alloc(&(*arenalist)->arena, size);
     }
+
+    jsprintf("NEW ARENA CREATED IN THE ARENA-LIST\n");
+    (*arenalist)->next = malloc(sizeof(ArenaList));
+
+    if((*arenalist)->next == NULL){
+        jsprintf("Error, ArenaList Allocation Failed\n");
+        return NULL;
+    }
+
+    size_t capacity = (*arenalist)->arena.capacity;
+
+    while(size > capacity){
+        capacity *= 2;
+    }
+
+    *arenalist = (*arenalist)->next;
+    (*arenalist)->arena = create_Arena(capacity);
+    (*arenalist)->next = NULL;
+    jsprintf("------------arena: %d arena.capacity: %d arena.cur_size: %d------------------\n", &(*arenalist)->arena, (*arenalist)->arena.capacity, (*arenalist)->arena.cur_size);
+    return arena_Alloc(&(*arenalist)->arena, size);
 }
 
 void *arenaList_Realloc(ArenaList **arenalist, void *p, size_t oldsz , size_t newsz){
@@ -109,10 +114,10 @@ void *arenaList_Realloc(ArenaList **arenalist, void *p, size_t oldsz , size_t ne
 // free all the arenas we created
 void arenaList_free(ArenaList * head){
     while (head != NULL) {
-        jsprintf("+++++head = %d+++++++++++", head);
+        jsprintf("+++++ head = %d +++++++++++", head);
         ArenaList * temp = head;
         head = head->next;
-        jsprintf("+++++head = %d+++++++++++", head);
+        jsprintf("+++++ head = %d +++++++++++", head);
         arena_free(&temp->arena);
         free(temp);
     }

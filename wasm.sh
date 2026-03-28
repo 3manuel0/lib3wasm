@@ -1,1 +1,0 @@
-clang -fno-builtin --target=wasm32 -ffast-math -O3 --no-standard-libraries -I./include -Wl,--export-all -Wl,--no-entry -Wl,--allow-undefined -DPLATFORM_WEB -o build/main.wasm src/string.c src/wasm_memory.c src/arena.c main.c

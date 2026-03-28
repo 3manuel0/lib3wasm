@@ -532,17 +532,17 @@ void sb_print(const sb *sb){
     fwrite(sb->str, 1, sb->len,stdout);
 }
 
-// void sb_writef(const sb *sb, FILE *file){
-//     if(sb == NULL){
-//         fwrite("NULL", 1, 4, file);
-//         return;
-//     }
-//     if(sb->str == NULL || sb->len == 0){
-//         fwrite("EMPTY_STR", 1, 9, file);
-//         return;
-//     }
-//     fwrite(sb->str, 1, sb->len,file);
-// }
+void sb_writef(const sb *sb, FILE *file){
+    if(sb == NULL){
+        fwrite("NULL", 1, 4, *file);
+        return;
+    }
+    if(sb->str == NULL || sb->len == 0){
+        fwrite("EMPTY_STR", 1, 9, *file);
+        return;
+    }
+    fwrite(sb->str, 1, sb->len,*file);
+}
 
 void sb_free(sb *sb){
     free(sb->str);

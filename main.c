@@ -37,8 +37,9 @@ void *test2(){
         string_view *s = arenaList_Alloc(&a, sv.len);
         jsprintf("capacity :%d adress :%d cur_size: %d\n", a->arena.capacity, a->arena.address, a->arena.cur_size);
         jsprintf("string_view *: %d\n", s);
+        sv_println(&sv);
     }
-
+    arenaList_Alloc(&a, KiB(5));
     jsprintf("capacity :%d adress :%d cur_size: %d next: %d\n", a->arena.capacity, a->arena.address, a->arena.cur_size, a->next);
     arenaList_free(a);
     return 0;
