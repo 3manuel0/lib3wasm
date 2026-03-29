@@ -36,10 +36,15 @@ unsigned char *wmalloc(unsigned long size){
         return ptr;
     }
     unsigned long i = size / PAGE_LEN;
-    if(i == 0)
-        __builtin_wasm_memory_grow(0, 1);
-    else 
-        __builtin_wasm_memory_grow(0, i + 1);
+    if(i == 0){
+        if (__builtin_wasm_memory_grow(0, 1) == -1)
+  	        return NULL;
+    }
+    else{
+        if(__builtin_wasm_memory_grow(0, i + 1) == -1){
+            return NULL;
+        }
+    }
     ((mem_header *)CURRENT_PTR)->size = alloc_size;
     ((mem_header *)CURRENT_PTR)->flag = 1;
     CURRENT_PTR += total_size;

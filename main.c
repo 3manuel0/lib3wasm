@@ -45,6 +45,7 @@ void test_ArenaList(){
     // s[0] = '1';
     jsprintf("capacity :%d adress :%d cur_size: %d next: %d prev: %d\n", a->arena.capacity, a->arena.address, a->arena.cur_size, a->next, a->prev);
     arenaList_free(a);
+    jsprintf("hello, world !\n");
     return;
 }
 
