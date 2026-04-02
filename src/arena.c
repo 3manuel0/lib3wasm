@@ -74,7 +74,7 @@ void *arenaList_Alloc(ArenaList **arenalist, size_t size){
         prev = prev->prev;
     }
 
-    jsprintf("NEW ARENA CREATED IN THE ARENA-LIST\n");
+    // jsprintf("NEW ARENA CREATED IN THE ARENA-LIST\n");
     (*arenalist)->next = malloc(sizeof(ArenaList));
 
     if((*arenalist)->next == NULL){
@@ -93,7 +93,7 @@ void *arenaList_Alloc(ArenaList **arenalist, size_t size){
     (*arenalist)->prev = prev;
     (*arenalist)->arena = create_Arena(capacity);
     (*arenalist)->next = NULL;
-    jsprintf("------------arena: %d arena.capacity: %d arena.cur_size: %d------------------\n", &(*arenalist)->arena, (*arenalist)->arena.capacity, (*arenalist)->arena.cur_size);
+    // jsprintf("------------arena: %d arena.capacity: %d arena.cur_size: %d------------------\n", &(*arenalist)->arena, (*arenalist)->arena.capacity, (*arenalist)->arena.cur_size);
     return arena_Alloc(&(*arenalist)->arena, size);
 }
 
@@ -120,7 +120,7 @@ void *arenaList_Realloc(ArenaList **arenalist, void *p, size_t oldsz , size_t ne
 // free all the arenas we created
 void arenaList_free(ArenaList * arenaList){
     while (arenaList != NULL) {
-        jsprintf("+++++ head = %d +++++++++++\n", arenaList);
+        jsprintf("+++++Arena freed address = %d+++++++++++\n", arenaList);
         ArenaList * temp = arenaList;
         arenaList = arenaList->prev;
         arena_free(&temp->arena);

@@ -9,25 +9,25 @@ size_t PAGE_LEN = KiB(64);
 unsigned char *heap_base(){
     long mb = MiB(1);
     float s =  (float)mb / PAGE_LEN;
-    jsprintf("%f %d\n", s, PAGE_LEN);
+    // jsprintf("%f %d\n", s, PAGE_LEN);
     __builtin_wasm_memory_grow(0, 1);
-    jsprintf("%d %d\n", HEAP_BASE, __builtin_wasm_memory_size(0));
+    // jsprintf("%d %d\n", HEAP_BASE, __builtin_wasm_memory_size(0));
     return HEAP_BASE;
 }
 
 // TODO : ADD THE MEMORY HEADER BEFORE THE ALLOCATION FOR FREE
 unsigned char *wmalloc(unsigned long size){
-    jsprintf("CURRENT_PTR = %d\n", CURRENT_PTR);
+    // jsprintf("CURRENT_PTR = %d\n", CURRENT_PTR);
     unsigned char *ptr = CURRENT_PTR + sizeof(mem_header);
     size_t alloc_size = ((size + (ALIGNMENT - 1)) & ~(ALIGNMENT - 1));
     size_t total_size = sizeof(mem_header) + alloc_size;
     unsigned long pages = __builtin_wasm_memory_size(0);
-    jsprintf("size of mem_header : %u\n", sizeof(mem_header));
+    // jsprintf("size of mem_header : %u\n", sizeof(mem_header));
     if((unsigned long)CURRENT_PTR + total_size <= pages * PAGE_LEN){
         ((mem_header *)CURRENT_PTR)->size = alloc_size;
         ((mem_header *)CURRENT_PTR)->flag = 1;
         // DEBUG 
-        jsprintf("CURRENT_PTR = %d ptr = %d  %d %d\n", CURRENT_PTR, ptr, ((mem_header *)CURRENT_PTR)->size, ((mem_header *)CURRENT_PTR)->flag);
+        // jsprintf("CURRENT_PTR = %d ptr = %d  %d %d\n", CURRENT_PTR, ptr, ((mem_header *)CURRENT_PTR)->size, ((mem_header *)CURRENT_PTR)->flag);
         CURRENT_PTR += total_size;
         return ptr;
     }
@@ -45,11 +45,13 @@ unsigned char *wmalloc(unsigned long size){
     ((mem_header *)CURRENT_PTR)->flag = 1;
     CURRENT_PTR += total_size;
     // DEBUG 
-    jsprintf("CURRENT_PTR = %d\n", CURRENT_PTR);
+    // jsprintf("CURRENT_PTR = %d\n", CURRENT_PTR);
     return ptr;
 }
 
 void *memcpy(void *dest, const void *src, size_t count){
+    if(dest == NULL || src == NULL)
+        return NULL;
     for(size_t i = 0; i < count; i++){
         ((u8 *)dest)[i] = ((u8 *)src)[i];
     }
@@ -78,4 +80,8 @@ void free(void *ptr){
     FREE_MEM.free_mem[FREE_MEM.count] = ptr;
     FREE_MEM.count += 1;
     return;
+}
+
+void *memset(void * s, i32 c, size_t n){
+    return __builtin_memset(s, c, n);
 }

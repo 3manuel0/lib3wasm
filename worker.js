@@ -53,6 +53,13 @@ const initPromise = WebAssembly.instantiateStreaming(fetch("build/main.wasm"), {
               args_ptrs += 4;
               i += 2;
               break;
+            case "c":
+              f_str += String.fromCharCode(
+                new Int32Array(buffer, args_ptrs, 1)[0],
+              );
+              args_ptrs += 4;
+              i += 2;
+              break;
             case "d":
               f_str += new Int32Array(buffer, args_ptrs, 1)[0];
               args_ptrs += 4;

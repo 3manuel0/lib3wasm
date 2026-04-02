@@ -31,23 +31,13 @@ i64 test_sv(){
 void test_ArenaList(){
     ArenaList * a = create_ArenaList(KiB(5));
     jsprintf("capacity :%d adress :%d cur_size: %d\n", a->arena.capacity, a->arena.address, a->arena.cur_size);
-    
-    string_view sv = sv_from_lit("Testing testing 1234 sdasdadas sdasdasdasd asdasdadasdaasd adadads");
-    for(int i = 0; i < 50; i++){
-        string_view *s = arenaList_Alloc(&a, sv.len);
-        jsprintf("capacity :%d adress :%d cur_size: %d\n", a->arena.capacity, a->arena.address, a->arena.cur_size);
-        jsprintf("string_view *: %d\n", s);
-        sv_println(&sv);
-    }
-    char *s = arenaList_Alloc(&a, 800);
-    arenaList_Alloc(&a, KiB(5));
-    arenaList_Alloc(&a, 800);
-    // s[0] = '1';
-    jsprintf("capacity :%d adress :%d cur_size: %d next: %d prev: %d\n", a->arena.capacity, a->arena.address, a->arena.cur_size, a->next, a->prev);
-    arenaList_free(a);
-    for(int i = 0; i < FREE_MEM.count;  i++){
-        jsprintf("%d %d \n", FREE_MEM.free_mem[i], ((mem_header*)FREE_MEM.free_mem[i] - 1)->size);
-    }
+    u8 * fake_file = malloc(200);
+    FILE *fp = fopen(fake_file, 200);
+    memset(fake_file, 'A', 200);
+    jsprintf("fp->offset : %d fp->size : %d %d\n", fp->offset, fp->size, fake_file);
+    for(int i = 0; i < 10; i++)
+        jsprintf("fgetc : %c\n", fgetc(fp));
+    jsprintf("ftell : %d\n", ftell(fp));
     arenaList_free(a);
     return;
 }

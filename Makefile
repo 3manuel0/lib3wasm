@@ -11,7 +11,7 @@ LDFLAGS = --target=wasm32 -fno-builtin -ffast-math -O3 \
           -DPLATFORM_WEB
 
 
-SRC = src/string.c src/wasm_memory.c src/arena.c
+SRC = src/string.c src/wasm_memory.c src/arena.c src/stdio.c
 OBJ = $(SRC:.c=.o)
 
 LIB = lib/lib3wasm.a
