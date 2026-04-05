@@ -1,6 +1,8 @@
 #include "../includes/wasm_mem.h"
 #include "../includes/lib3man.h"
 
+static uint32_t RAND = 1;
+
 Free_mem FREE_MEM = {0};
 u8 *HEAP_BASE = &__heap_base;
 u8 *CURRENT_PTR = &__heap_base;
@@ -65,3 +67,14 @@ void free(void *ptr){
     return;
 }
 
+
+
+void srand(unsigned int seed) {
+    RAND = seed;
+}
+
+int rand(void) {
+    RAND = RAND * 78975634 + 54321;
+    
+    return ((unsigned int)(RAND / 65536) % 127) + 31;
+}

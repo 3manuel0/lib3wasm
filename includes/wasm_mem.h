@@ -14,6 +14,8 @@ typedef struct Free_mem{
     size_t count;
 }Free_mem;
 
+
+
 extern unsigned char __heap_base;
 extern unsigned char * HEAP_BASE;
 extern unsigned char * CURRENT_PTR;
@@ -24,8 +26,13 @@ extern unsigned long __builtin_wasm_memory_size(int memory_index);
 
 unsigned char * wmalloc(unsigned long size);
 
-void *malloc(size_t size);
+extern void *malloc(size_t size);
 
+char time();
+
+int rand(void);
+
+void srand(unsigned int seed);
 // TODO TEST THESE FUNCTIONS 
 
 // TODO : IMPLIMENT THESE

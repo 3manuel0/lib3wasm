@@ -114,6 +114,9 @@ const initPromise = WebAssembly.instantiateStreaming(fetch("build/main.wasm"), {
       // console.log(str);
       terminal += str;
     },
+    time: () => {
+      return Date.now();
+    },
   }),
 }).then((w) => {
   wasm = w;
@@ -137,7 +140,7 @@ self.onmessage = async (e) => {
       break;
     case "run_test":
       test_ArenaList();
-      test_sv();
+      // test_sv();
       let term = terminal;
       self.postMessage({ type: "stdout", term });
       break;

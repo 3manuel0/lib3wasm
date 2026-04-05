@@ -2,7 +2,6 @@
 #include "../includes/wasm_mem.h"
 #include "../includes/3manstr.h"
 
-
 FILE *stdout = &(FILE){0, 0, 0, 1};
 FILE *stderr = &(FILE){0, 0, 0, 2};
 

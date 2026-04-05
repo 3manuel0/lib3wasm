@@ -1,7 +1,5 @@
 #include "includes/lib3man.h"
 
-
-
 i64 test_sv(){
     sv tests[] = {
         sv_from_lit("123.456"),
@@ -32,10 +30,13 @@ void test_ArenaList(){
     ArenaList * a = create_ArenaList(KiB(5));
     jsprintf("capacity :%d adress :%d cur_size: %d\n", a->arena.capacity, a->arena.address, a->arena.cur_size);
     u8 * fake_file = malloc(200);
+    srand(time());
     FILE *fp = fopen(fake_file, 200);
-    memset(fake_file, 'A', 200);
+    for(int i = 0; i < 200; i++){
+        fake_file[i] = rand();
+    }
     jsprintf("fp->offset : %d fp->size : %d %d\n", fp->offset, fp->size, fake_file);
-    for(int i = 0; i < 10; i++)
+    for(int i = 0; i < 15; i++)
         jsprintf("fgetc : %c\n", fgetc(fp));
     jsprintf("ftell : %d\n", ftell(fp));
     arenaList_free(a);
