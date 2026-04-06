@@ -67,14 +67,12 @@ void free(void *ptr){
     return;
 }
 
-
-
 void srand(unsigned int seed) {
     RAND = seed;
 }
 
 int rand(void) {
-    RAND = RAND * 78975634 + 54321;
+    RAND = RAND * 1664525 + 1013904223;
     
-    return ((unsigned int)(RAND / 65536) % 127) + 31;
+    return ((unsigned int)(RAND / 65536));
 }
