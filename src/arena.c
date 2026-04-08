@@ -21,10 +21,12 @@ void *arena_Alloc(Arena * arena, size_t size){
 
     void * ptr = NULL;
     if(arena->memory == NULL) return NULL;
-    if(arena->cur_size + size <= arena->capacity){
+    size_t aligned_size = ((size + (ALIGNMENT - 1)) & ~(ALIGNMENT - 1));
+    // ((size + (ALIGNMENT - 1)) & ~(ALIGNMENT - 1))
+    if(arena->cur_size + aligned_size <= arena->capacity){
         ptr = arena->address;
-        arena->address =  (char *)arena->address + size;
-        arena->cur_size += size;
+        arena->address =  (char *)arena->address + aligned_size;
+        arena->cur_size += aligned_size;
     }else{
         jsprintf("Error, Arena is Full\n");
     }
