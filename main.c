@@ -34,11 +34,11 @@ void test_ArenaList(){
     FILE *fp = fopen(fake_file, 200);
     for(int i = 0; i < 200; i++){
         // min + (rand() % (max - min + 1))
-        fake_file[i] = 32 + (rand() % (127 - 32 + 1));
+        fake_file[i] = 32 + (rand() % (126 - 32 + 1));
         // jsprintf("%d\n", fake_file[i]);
     }
     jsprintf("fp->offset : %d fp->size : %d %d\n", fp->offset, fp->size, fake_file);
-    for(int i = 0; i < 15; i++){
+    for(int i = 0; i < 200; i++){
         u8 ch = fgetc(fp);
         jsprintf("fgetc : %c %d\n", ch, ch);
     }

@@ -49,8 +49,8 @@ const initPromise = WebAssembly.instantiateStreaming(fetch("build/main.wasm"), {
         if (str[i] === "%") {
           switch (str[i + 1]) {
             case "f":
-              f_str += new Float32Array(buffer, args_ptrs, 1)[0];
-              args_ptrs += 4;
+              f_str += new Float64Array(buffer, args_ptrs, 1)[0];
+              args_ptrs += 8;
               i += 2;
               break;
             case "c":
@@ -70,6 +70,13 @@ const initPromise = WebAssembly.instantiateStreaming(fetch("build/main.wasm"), {
               f_str += uint;
               args_ptrs += 4;
               i += 2;
+              break;
+            // fix this, it causes errors
+            case "g":
+              f_str += new Float64Array(buffer, args_ptrs, 1)[0].toPrecision(6);
+              args_ptrs += 8;
+              i += 2;
+              console.log(str, f_str);
               break;
             case "s":
               const str_ptr = new Uint32Array(buffer, args_ptrs, 1)[0];
