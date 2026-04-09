@@ -55,6 +55,13 @@ void *malloc(size_t size){
     return wmalloc(size);
 }
 
+void *calloc(size_t nmemb, size_t size){
+    void *p = malloc(nmemb * size);
+    if(p == NULL) return NULL;
+    memset(p, 0, nmemb * size);
+    return p;
+}
+
 void free(void *ptr){
     mem_header *h = (mem_header *) ptr - 1;
     if(h->flag == false){

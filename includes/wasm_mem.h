@@ -28,6 +28,8 @@ unsigned char * wmalloc(unsigned long size);
 
 extern void *malloc(size_t size);
 
+extern void *calloc(size_t nmemb, size_t size);
+
 char time();
 
 int rand(void);

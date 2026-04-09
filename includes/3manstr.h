@@ -2,7 +2,7 @@
 #define _3MANSTR_H
 #include "3mandef.h"
 
-extern void *__builtin_memset(void *s, int c, size_t n);
+extern void *__builtin_memset(void *s, int c, size_t n);//wasm memset
 
 size_t strlen(const char *s);
 
